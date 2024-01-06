@@ -327,24 +327,35 @@ def message_popup(title, message):
     with st.expander(title):
         st.write(message)
         st.button("Close")
-
+# =========================================================================================================================================== #
 # Define the pages
 def home():
     st.write("Welcome to the Home Page!")
-    # Add content for the home page as needed
-
-def process(data_path):
-    st.write("Welcome to the About Page!")
-    st.header("Clone data from GitHub")
-    if st.button("Extract"):
+    # Display buttons horizontally using st.columns
+    col1, col2,col3,col4,col5,col6,col7,col8,col9 = st.columns(9)
+    btn_extract = col1.button("Extract Data")
+    btn_transform = col2.button("Load Data")
+    if btn_extract:
         with st.spinner("Extracting data..."):
             repo_url ="https://api.github.com/repos/PhonePe/pulse"
-            clone_github_repo(repo_url,data_path)
-    st.header("Transform and Load data to Database")    
-    if st.button("Load"):
+            clone_github_repo(repo_url,data_path) 
+    if btn_transform:
         with st.spinner("Extracting data..."):
             transform_load_data(data_path)
-    # Add content for the about page as needed  
+
+def process(data_path):
+    st.write("Clone data from GitHub")
+    col1, col2,col3,col4,col5,col6,col7,col8,col9 = st.columns(9)
+    btn_extract = col1.button("Extract Data")
+    btn_transform = col2.button("Load Data")
+    if btn_extract:
+        with st.spinner("Extracting data..."):
+            repo_url ="https://api.github.com/repos/PhonePe/pulse"
+            clone_github_repo(repo_url,data_path) 
+    if btn_transform:
+        with st.spinner("Extracting data..."):
+            transform_load_data(data_path)
+
 def visualize():
     st.write("Welcome to page!")      
 
@@ -363,9 +374,12 @@ def main():
     #st.markdown("<h1 style='text-align: center; color: blue;'>PhonePe Pulse Data Visualization and Exploration</h1>", unsafe_allow_html=True)
     title_html = """
     <style>
+        body {
+            background-color: #222222; /* Set your desired background color */
+        }
         .title-container {
-            background-color: #265073; /* Set your desired background color */
-            padding: 15px;
+            background-color: #2D9596; /* Set your desired background color */
+            padding: 5px;
             border-radius: 10px;
             text-align: center;
         }
@@ -380,51 +394,68 @@ def main():
             justify-content: Left;
         }
         .nav-link {
-            color: #ffffff;
+            color: #265073;
             margin: 0 15px;
             text-decoration: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
         }
+        .nav-link:hover {
+                background-color: #C8F9F6; /* Set your desired background color on hover */
+        }
+        .active-tab {
+            background-color: #C8F9F6; /* Set the background color for the active tab */
+            color: #ffffff; /* Set the text color for the active tab */
+    }
     </style>
+    <script>
+        function navigate(page) {
+            const contentContainer = document.getElementById('content-container');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            // Remove 'active-tab' class from all tabs
+            navLinks.forEach(link => link.classList.remove('active-tab'));
+
+            switch (page) {
+                case 1:
+                    contentContainer.innerHTML = '';
+                    break;
+                case 2:
+                    contentContainer.innerHTML = '<iframe src="/process" width="100%" height="800px"></iframe>';
+                    break;
+                case 3:
+                    contentContainer.innerHTML = '<iframe src="/visualize" width="100%" height="800px"></iframe>';
+                    break;
+            }
+
+            // Add 'active-tab' class to the clicked tab
+            navLinks[page - 1].classList.add('active-tab');
+        }
+    </script>
     <div class="title-container">
         <h1 class="title-text">PhonePe Pulse Data Visualization and Exploration</h1>
     </div>
     <div class="nav-bar">
-        <a href="#" class="nav-link" onclick=navigate('home') >Home</a>
-        <a href="#" class="nav-link" onclick=navigate('process') >Data Processing</a>
-        <a href="#" class="nav-link" onclick=navigate('visualize') >Data Visualization</a>
+        <div class="nav-link" onclick="navigate(1)">Home</div>
+        <div class="nav-link" onclick="navigate(2)">Data Processing</div>
+        <div class="nav-link" onclick="navigate(3)">Data Visualization</div>
     </div>
     <div id="content-container"></div>
-    <script>
-        function navigate(page) {
-            const contentContainer = document.getElementById('content-container');
-            switch (page) {
-                case 'home':
-                    contentContainer.innerHTML = '';
-                    break;
-                case 'process':
-                    contentContainer.innerHTML = '<iframe src="/process" width="100%" height="800px"></iframe>';
-                    break;
-                case 'visualize':
-                    contentContainer.innerHTML = '<iframe src="/visualize" width="100%" height="800px"></iframe>';
-                    break;
-            }
-        }
-    </script>
+    
     """
     st.markdown(title_html, unsafe_allow_html=True)
     # Get the current page from the URL
-    current_page = st.experimental_get_query_params().get("page", ["home"])[0]
+    current_page = st.experimental_get_query_params().get("page", [1])[0]
+    print(current_page)
 
     # Display the content based on the current page
-    if current_page == "home":
+    if current_page == 1:
         home()
-    elif current_page == "process":
+    elif current_page == 2:
         process(data_path)
-    elif current_page == "visualize":
+    elif current_page == 3:
         visualize()
-
-    
-
 
 
 if __name__ == "__main__":
